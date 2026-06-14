@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#667eea">
+    <title>YOUCLONE - Доска объявлений</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --accent: #f093fb;
+            --success: #4ade80;
+            --warning: #fbbf24;
+            --danger: #f87171;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --gradient-4: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            --shadow: 0 10px 40px -10px rgba(0,0,0,0.2);
+            --shadow-glow: 0 0 40px rgba(102, 126, 234, 0.5);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+            color: var(--dark);
+            min-height: 100vh;
+            padding-bottom: 80px;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-1);
+            color: white;
+            padding: 15px 20px;
+            position: sticky;
+            top: 0;            z-index: 1000;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(20px);
+        }
+
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff 0%, #f093fb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .header-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
+        }
+
+        .header-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+
+        /* Search */
+        .search-box {
+            position: relative;
+            margin-bottom: 12px;
+        }
+        .search-box input {
+            width: 100%;
+            padding: 14px 50px 14px 20px;
+            border: none;
+            border-radius: 16px;
+            background: rgba(255,255,255,0.95);
+            font-size: 15px;
+            color: var(--dark);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            box-shadow: var(--shadow-glow);
+            transform: translateY(-2px);
+        }
+
+        .search-btn {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 40px;
+            border: none;
+            border-radius: 12px;
+            background: var(--gradient-2);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .search-btn:hover {
+            transform: translateY(-50%) scale(1.05);
+        }
+
+        /* Categories */
+        .categories {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding: 5px 5px 15px;
+            scrollbar-width: none;
+        }
+
+        .categories::-webkit-scrollbar {
+            display: none;
+        }
+        .category-chip {
+            flex-shrink: 0;
+            padding: 10px 20px;
+            border-radius: 25px;
+            background: rgba(255,255,255,0.9);
+            border: 2px solid transparent;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            white-space: nowrap;
+            color: var(--dark);
+        }
+
+        .category-chip.active {
+            background: var(--gradient-2);
+            color: white;
+            border-color: white;
+            box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
+        }
+
+        .category-chip:hover:not(.active) {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .section-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Ads Grid */
+        .ads-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;        }
+
+        .ad-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: all 0.3s;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .ad-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 60px -15px rgba(0,0,0,0.3);
+        }
+
+        .ad-image {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+
+        .ad-badge {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            color: white;
+            z-index: 2;
+        }
+
+        .badge-new {
+            background: var(--gradient-4);
+        }
+
+        .badge-hot {
+            background: var(--gradient-2);
+        }
+
+        .ad-favorite {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 36px;
+            height: 36px;            border-radius: 50%;
+            background: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: #ccc;
+            transition: all 0.3s;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 2;
+        }
+
+        .ad-favorite.active {
+            color: var(--danger);
+        }
+
+        .ad-favorite:hover {
+            transform: scale(1.1);
+        }
+
+        .ad-content {
+            padding: 16px;
+        }
+
+        .ad-price {
+            font-size: 24px;
+            font-weight: 800;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .ad-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+
+        .ad-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #64748b;
+            font-size: 13px;
+        }
+        .ad-meta span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* FAB Button */
+        .fab {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: var(--gradient-2);
+            border: none;
+            color: white;
+            font-size: 28px;
+            cursor: pointer;
+            box-shadow: 0 10px 40px -10px rgba(245, 87, 108, 0.6);
+            transition: all 0.3s;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .fab:hover {
+            transform: scale(1.1) rotate(90deg);
+            box-shadow: 0 15px 50px -10px rgba(245, 87, 108, 0.8);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 2000;
+            align-items: flex-end;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal.active {
+            display: flex;        }
+
+        .modal-content {
+            background: white;
+            width: 100%;
+            max-width: 600px;
+            max-height: 90vh;
+            border-radius: 30px 30px 0 0;
+            overflow: hidden;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+            }
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            background: var(--gradient-1);
+            color: white;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .modal-close {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.3s;
+        }
+
+        .modal-close:hover {
+            background: rgba(255,255,255,0.3);
+            transform: rotate(90deg);        }
+
+        .modal-body {
+            padding: 20px;
+            overflow-y: auto;
+            max-height: calc(90vh - 80px);
+        }
+
+        /* Form */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--dark);
+            font-size: 14px;
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 15px;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .image-upload {
+            border: 3px dashed var(--primary);
+            border-radius: 16px;
+            padding: 40px 20px;            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: linear-gradient(135deg, #667eea08 0%, #764ba208 100%);
+        }
+
+        .image-upload:hover {
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+            transform: translateY(-2px);
+        }
+
+        .image-upload i {
+            font-size: 48px;
+            color: var(--primary);
+            margin-bottom: 12px;
+        }
+
+        .image-upload-text {
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 5px;
+        }
+
+        .image-upload-hint {
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn-primary {
+            background: var(--gradient-1);
+            color: white;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(102, 126, 234, 0.6);
+        }
+        .btn-secondary {
+            background: #f1f5f9;
+            color: var(--dark);
+        }
+
+        .btn-secondary:hover {
+            background: #e2e8f0;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #64748b;
+        }
+
+        .empty-state i {
+            font-size: 80px;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+
+        .empty-state h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--dark);
+            color: white;
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-weight: 600;
+            opacity: 0;
+            transition: all 0.3s;
+            z-index: 3000;
+            box-shadow: var(--shadow);
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+        /* Responsive */
+        @media (max-width: 768px) {
+            .ads-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-content {
+                border-radius: 25px 25px 0 0;
+            }
+            
+            .fab {
+                bottom: 20px;
+                right: 20px;
+                width: 56px;
+                height: 56px;
+            }
+        }
+
+        /* Loading Animation */
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+
+        @keyframes loading {
+            0% {
+                background-position: 200% 0;
+            }
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
+        /* Filter Panel */
+        .filter-panel {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .filter-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+        .filter-select {
+            flex: 1;
+            min-width: 140px;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        /* Price Range */
+        .price-range {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .price-input {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .price-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-top">
+            <div class="logo">YOUCLONE</div>
+            <div class="header-actions">
+                <button class="header-btn" onclick="showFavorites()">
+                    <i class="fas fa-heart"></i>
+                </button>
+                <button class="header-btn" onclick="showProfile()">
+                    <i class="fas fa-user"></i>                </button>
+            </div>
+        </div>
+        
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Поиск объявлений..." onkeyup="searchAds()">
+            <button class="search-btn">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+
+        <div class="categories" id="categories">
+            <div class="category-chip active" data-category="all">Все</div>
+            <div class="category-chip" data-category="electronics">📱 Электроника</div>
+            <div class="category-chip" data-category="transport">🚗 Транспорт</div>
+            <div class="category-chip" data-category="realestate">🏠 Недвижимость</div>
+            <div class="category-chip" data-category="clothes">👕 Одежда</div>
+            <div class="category-chip" data-category="home">🏡 Дом и сад</div>
+            <div class="category-chip" data-category="hobby">🎮 Хобби</div>
+            <div class="category-chip" data-category="animals">🐾 Животные</div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container">
+        <h2 class="section-title">
+            <i class="fas fa-fire"></i>
+            Свежие объявления
+        </h2>
+        
+        <div class="ads-grid" id="adsGrid">
+            <!-- Ads will be loaded here -->
+        </div>
+
+        <div class="empty-state" id="emptyState" style="display: none;">
+            <i class="fas fa-box-open"></i>
+            <h3>Нет объявлений</h3>
+            <p>Будьте первым, кто разместит объявление!</p>
+        </div>
+    </div>
+
+    <!-- FAB Button -->
+    <button class="fab" onclick="openModal()">
+        <i class="fas fa-plus"></i>
+    </button>
+
+    <!-- Modal -->
+    <div class="modal" id="adModal">
+        <div class="modal-content">
+            <div class="modal-header">                <div class="modal-title">Новое объявление</div>
+                <button class="modal-close" onclick="closeModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="adForm" onsubmit="submitAd(event)">
+                    <div class="form-group">
+                        <label class="form-label">Фотографии</label>
+                        <div class="image-upload" onclick="document.getElementById('imageInput').click()">
+                            <i class="fas fa-camera"></i>
+                            <div class="image-upload-text">Нажмите для загрузки</div>
+                            <div class="image-upload-hint">или перетащите фото сюда</div>
+                        </div>
+                        <input type="file" id="imageInput" accept="image/*" multiple style="display: none" onchange="handleImages(this)">
+                        <div id="imagePreview" style="margin-top: 15px; display: flex; gap: 10px; flex-wrap: wrap;"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Категория *</label>
+                        <select class="form-select" id="category" required>
+                            <option value="">Выберите категорию</option>
+                            <option value="electronics">📱 Электроника</option>
+                            <option value="transport">🚗 Транспорт</option>
+                            <option value="realestate">🏠 Недвижимость</option>
+                            <option value="clothes">👕 Одежда</option>
+                            <option value="home">🏡 Дом и сад</option>
+                            <option value="hobby">🎮 Хобби</option>
+                            <option value="animals">🐾 Животные</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Название *</label>
+                        <input type="text" class="form-input" id="title" placeholder="Например: iPhone 14 Pro" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Цена (₽) *</label>
+                        <input type="number" class="form-input" id="price" placeholder="0" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Описание</label>
+                        <textarea class="form-textarea" id="description" placeholder="Расскажите о товаре..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Город</label>
+                        <input type="text" class="form-input" id="city" placeholder="Москва" value="Москва">                    </div>
+
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-paper-plane"></i> Опубликовать
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">
+                        Отмена
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // Data
+        let ads = JSON.parse(localStorage.getItem('youclone_ads')) || [];
+        let favorites = JSON.parse(localStorage.getItem('youclone_favorites')) || [];
+        let currentCategory = 'all';
+        let uploadedImages = [];
+
+        // Category icons and names
+        const categories = {
+            electronics: { icon: '📱', name: 'Электроника', color: '#667eea' },
+            transport: { icon: '🚗', name: 'Транспорт', color: '#f5576c' },
+            realestate: { icon: '🏠', name: 'Недвижимость', color: '#43e97b' },
+            clothes: { icon: '👕', name: 'Одежда', color: '#f093fb' },
+            home: { icon: '🏡', name: 'Дом и сад', color: '#4facfe' },
+            hobby: { icon: '🎮', name: 'Хобби', color: '#fbbf24' },
+            animals: { icon: '🐾', name: 'Животные', color: '#a78bfa' }
+        };
+
+        // Sample ads
+        const sampleAds = [
+            {
+                id: 1,
+                title: 'iPhone 14 Pro Max 256GB',
+                price: 95000,
+                category: 'electronics',
+                city: 'Москва',
+                description: 'Идеальное состояние, полный комплект',
+                image: 'https://images.unsplash.com/photo-1678685888221-cda773a9dc4c?w=400',
+                date: new Date().toISOString(),
+                favorite: false
+            },
+            {
+                id: 2,
+                title: 'BMW X5 2022 года',                price: 6500000,
+                category: 'transport',
+                city: 'Санкт-Петербург',
+                description: 'Один владелец, пробег 25000 км',
+                image: 'https://images.unsplash.com/photo-1556189250-72ba95452da4?w=400',
+                date: new Date(Date.now() - 86400000).toISOString(),
+                favorite: false
+            },
+            {
+                id: 3,
+                title: '2-комнатная квартира, 65 м²',
+                price: 12500000,
+                category: 'realestate',
+                city: 'Москва',
+                description: 'Новостройка, ремонт, рядом метро',
+                image: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=400',
+                date: new Date(Date.now() - 172800000).toISOString(),
+                favorite: false
+            },
+            {
+                id: 4,
+                title: 'MacBook Pro 16 M2',
+                price: 215000,
+                category: 'electronics',
+                city: 'Казань',
+                description: 'Новый, запечатанный',
+                image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400',
+                date: new Date().toISOString(),
+                favorite: false
+            },
+            {
+                id: 5,
+                title: 'PlayStation 5 + 2 джойстика',
+                price: 55000,
+                category: 'hobby',
+                city: 'Новосибирск',
+                description: 'Дисковая версия, 5 игр в комплекте',
+                image: 'https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?w=400',
+                date: new Date(Date.now() - 259200000).toISOString(),
+                favorite: false
+            },
+            {
+                id: 6,
+                title: 'Золотистый ретривер, щенки',
+                price: 35000,
+                category: 'animals',
+                city: 'Москва',
+                description: 'Элитные щенки с документами',
+                image: 'https://images.unsplash.com/photo-1633722711698-a16568258ed5?w=400',
+                date: new Date().toISOString(),                favorite: false
+            }
+        ];
+
+        // Initialize
+        if (ads.length === 0) {
+            ads = sampleAds;
+            saveAds();
+        }
+
+        renderAds();
+        setupCategories();
+
+        // Functions
+        function setupCategories() {
+            document.querySelectorAll('.category-chip').forEach(chip => {
+                chip.addEventListener('click', function() {
+                    document.querySelectorAll('.category-chip').forEach(c => c.classList.remove('active'));
+                    this.classList.add('active');
+                    currentCategory = this.dataset.category;
+                    renderAds();
+                });
+            });
+        }
+
+        function renderAds() {
+            const grid = document.getElementById('adsGrid');
+            const emptyState = document.getElementById('emptyState');
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+
+            let filteredAds = ads.filter(ad => {
+                const matchesCategory = currentCategory === 'all' || ad.category === currentCategory;
+                const matchesSearch = ad.title.toLowerCase().includes(searchTerm) || 
+                                    ad.description.toLowerCase().includes(searchTerm);
+                return matchesCategory && matchesSearch;
+            });
+
+            // Sort by date (newest first)
+            filteredAds.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            if (filteredAds.length === 0) {
+                grid.style.display = 'none';
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            grid.style.display = 'grid';
+            emptyState.style.display = 'none';
+
+            grid.innerHTML = filteredAds.map(ad => {                const cat = categories[ad.category];
+                const isFavorite = favorites.includes(ad.id);
+                const daysAgo = Math.floor((Date.now() - new Date(ad.date)) / 86400000);
+                const dateText = daysAgo === 0 ? 'Сегодня' : daysAgo === 1 ? 'Вчера' : `${daysAgo} дн. назад`;
+                
+                return `
+                    <div class="ad-card" onclick="showAdDetail(${ad.id})">
+                        <span class="ad-badge ${daysAgo < 2 ? 'badge-new' : 'badge-hot'}">
+                            ${daysAgo < 2 ? 'NEW' : 'HOT'}
+                        </span>
+                        <button class="ad-favorite ${isFavorite ? 'active' : ''}" onclick="toggleFavorite(event, ${ad.id})">
+                            <i class="${isFavorite ? 'fas' : 'far'} fa-heart"></i>
+                        </button>
+                        <img class="ad-image" src="${ad.image}" alt="${ad.title}" onerror="this.src='https://via.placeholder.com/400x300/667eea/ffffff?text=No+Image'">
+                        <div class="ad-content">
+                            <div class="ad-price">${formatPrice(ad.price)} ₽</div>
+                            <div class="ad-title">${ad.title}</div>
+                            <div class="ad-meta">
+                                <span><i class="fas fa-map-marker-alt"></i> ${ad.city}</span>
+                                <span><i class="far fa-clock"></i> ${dateText}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function formatPrice(price) {
+            return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+        }
+
+        function searchAds() {
+            renderAds();
+        }
+
+        function openModal() {
+            document.getElementById('adModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            document.getElementById('adModal').classList.remove('active');
+            document.body.style.overflow = '';
+            uploadedImages = [];
+            document.getElementById('imagePreview').innerHTML = '';
+            document.getElementById('adForm').reset();
+        }
+
+        function handleImages(input) {
+            const files = Array.from(input.files);            uploadedImages = [];
+
+            files.forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    uploadedImages.push(e.target.result);
+                    updateImagePreview();
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function updateImagePreview() {
+            const preview = document.getElementById('imagePreview');
+            preview.innerHTML = uploadedImages.map((img, idx) => `
+                <div style="position: relative; width: 100px; height: 100px; border-radius: 10px; overflow: hidden;">
+                    <img src="${img}" style="width: 100%; height: 100%; object-fit: cover;">
+                    <button onclick="removeImage(${idx})" style="position: absolute; top: 5px; right: 5px; width: 24px; height: 24px; border-radius: 50%; background: rgba(0,0,0,0.6); border: none; color: white; cursor: pointer;">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function removeImage(index) {
+            uploadedImages.splice(index, 1);
+            updateImagePreview();
+        }
+
+        function submitAd(e) {
+            e.preventDefault();
+
+            const newAd = {
+                id: Date.now(),
+                title: document.getElementById('title').value,
+                price: parseInt(document.getElementById('price').value),
+                category: document.getElementById('category').value,
+                description: document.getElementById('description').value,
+                city: document.getElementById('city').value,
+                image: uploadedImages[0] || `https://source.unsplash.com/random/400x300/?${document.getElementById('category').value}`,
+                date: new Date().toISOString(),
+                favorite: false
+            };
+
+            ads.unshift(newAd);
+            saveAds();
+            renderAds();
+            closeModal();
+            showToast('Объявление успешно опубликовано! 🎉');
+        }
+        function toggleFavorite(e, id) {
+            e.stopPropagation();
+            
+            if (favorites.includes(id)) {
+                favorites = favorites.filter(fav => fav !== id);
+                showToast('Удалено из избранного');
+            } else {
+                favorites.push(id);
+                showToast('Добавлено в избранное ❤️');
+            }
+            
+            localStorage.setItem('youclone_favorites', JSON.stringify(favorites));
+            renderAds();
+        }
+
+        function showAdDetail(id) {
+            const ad = ads.find(a => a.id === id);
+            if (!ad) return;
+
+            const cat = categories[ad.category];
+            const html = `
+                <div style="padding: 20px;">
+                    <img src="${ad.image}" style="width: 100%; border-radius: 16px; margin-bottom: 20px;" onerror="this.src='https://via.placeholder.com/400x300'">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+                        <span style="font-size: 32px;">${cat.icon}</span>
+                        <span style="font-weight: 600; color: ${cat.color};">${cat.name}</span>
+                    </div>
+                    <h2 style="font-size: 24px; margin-bottom: 15px; color: var(--dark);">${ad.title}</h2>
+                    <div style="font-size: 32px; font-weight: 800; background: var(--gradient-1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 20px;">
+                        ${formatPrice(ad.price)} ₽
+                    </div>
+                    <div style="background: #f8fafc; padding: 16px; border-radius: 12px; margin-bottom: 20px;">
+                        <p style="color: #64748b; line-height: 1.6;">${ad.description || 'Нет описания'}</p>
+                    </div>
+                    <div style="display: flex; gap: 12px; margin-bottom: 20px; color: #64748b;">
+                        <span><i class="fas fa-map-marker-alt"></i> ${ad.city}</span>
+                        <span><i class="far fa-clock"></i> ${new Date(ad.date).toLocaleString('ru-RU')}</span>
+                    </div>
+                    <button class="btn btn-primary" style="margin-bottom: 10px;">
+                        <i class="fas fa-phone"></i> Показать телефон
+                    </button>
+                    <button class="btn btn-secondary" onclick="closeModal()">
+                        Закрыть
+                    </button>
+                </div>
+            `;
+
+            // Create detail modal
+            const modal = document.createElement('div');            modal.className = 'modal active';
+            modal.innerHTML = `
+                <div class="modal-content" style="max-height: 95vh; overflow-y: auto;">
+                    <div class="modal-header">
+                        <div class="modal-title">Объявление</div>
+                        <button class="modal-close" onclick="this.closest('.modal').remove()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    ${html}
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) this.remove();
+            });
+        }
+
+        function showFavorites() {
+            const favAds = ads.filter(ad => favorites.includes(ad.id));
+            if (favAds.length === 0) {
+                showToast('У вас пока нет избранных объявлений');
+                return;
+            }
+            
+            currentCategory = 'all';
+            document.querySelectorAll('.category-chip').forEach(c => c.classList.remove('active'));
+            document.querySelector('.category-chip[data-category="all"]').classList.add('active');
+            
+            // Filter to show only favorites
+            const grid = document.getElementById('adsGrid');
+            grid.innerHTML = favAds.map(ad => {
+                const cat = categories[ad.category];
+                return `
+                    <div class="ad-card" onclick="showAdDetail(${ad.id})">
+                        <button class="ad-favorite active" onclick="toggleFavorite(event, ${ad.id})">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <img class="ad-image" src="${ad.image}" alt="${ad.title}">
+                        <div class="ad-content">
+                            <div class="ad-price">${formatPrice(ad.price)} ₽</div>
+                            <div class="ad-title">${ad.title}</div>
+                            <div class="ad-meta">
+                                <span><i class="fas fa-map-marker-alt"></i> ${ad.city}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');            
+            showToast('Показаны избранные объявления');
+        }
+
+        function showProfile() {
+            const myAds = ads.filter(ad => ad.id === Date.now() || true); // In real app, filter by user
+            showToast('Профиль пользователя (в разработке)');
+        }
+
+        function saveAds() {
+            localStorage.setItem('youclone_ads', JSON.stringify(ads));
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        // Close modal on outside click
+        document.getElementById('adModal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+
+        // Service Worker for PWA
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('data:text/javascript,' + encodeURIComponent(`
+                self.addEventListener('install', e => e.waitUntil(self.skipWaiting()));
+                self.addEventListener('activate', e => e.waitUntil(self.clients.claim()));
+                self.addEventListener('fetch', e => e.respondWith(fetch(e.request).catch(() => new Response('Offline'))));
+            `)).catch(() => {});
+        }
+    </script>
+</body>
+</html>
